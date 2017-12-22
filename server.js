@@ -1,19 +1,13 @@
 var express = require('express');
+var bodyParser = require('body-parser');
+
+
 var app = express();
 var PORT = process.env.PORT || 3000;
-var todos = [{
-    id: 1,
-    description: 'Finish your node course before travelling',
-    completed: false
-}, {
-    id: 2,
-    description: 'Download the laravel full course',
-    completed: false
-}, {
-    id: 3,
-    description: 'Get your hands on angular and enough laravel won\'t be too bad',
-    completed: true
-}];
+var todos = [];
+var todoNextId = 1;
+
+app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
     res.send('Todo API root');
@@ -49,8 +43,20 @@ app.get('/todos/:id', function (req, res) {
 
 });
 
+//POST  /todos request /app.post method will set up an api route
+app.post('/todos', function (req, res) {
+    var body = req.body;
+
+    //add the id field
+    body.id = todoNextId++;
+    //Push refractured body into the array
+    todos.push(body);
+    res.json(body);
+
+});
+
+
 app.listen(PORT, function () {
     console.log('Express is listening on PORT: ' + PORT + '!');
 });
-//checking to see the difference made
-//checking another, maybe a headsway smhw!
+
