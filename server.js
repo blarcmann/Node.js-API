@@ -41,13 +41,22 @@ app.get('/todos', function (req, res) {
 //GET /todos/:id            //getting each todo module //:id with variable id
 app.get('/todos/:id', function (req, res) {
     var todoId = parseInt(req.params.id, 10);
-    var matchedTodo = _.findWhere(todos, {id: todoId});
 
-    if(matchedTodo) {
-        res.json(matchedTodo);
-    } else {
-         res.status(404).send();
-    }
+    var matchedTodo = db.todo.findById(todoId).then(function (todo) {
+        if(todo) {
+            res.status(400).json(todo);
+        } else {
+            res.status(404).send();
+        }
+    })
+
+    // var matchedTodo = _.findWhere(todos, {id: todoId});
+
+    // if(matchedTodo) {
+    //     res.json(matchedTodo);
+    // } else {
+    //      res.status(404).send();
+    // }
 });
 
 //POST  /todos request /app.post method will set up an api route 
