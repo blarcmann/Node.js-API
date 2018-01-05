@@ -20,22 +20,43 @@ app.get('/', function (req, res) {
 //Getting all todos
 
 app.get('/todos', function (req, res) {
-    var queryParams = req.query;
-    var filteredTodos = todos;
+    var query = req.query;
+    var where = {};
+
+    if(query.hasOwnProperty('completed') && query.completed === 'true') {
+        where.completed = true;
+    } else if(query.hasOwnProperty('completed') && query.completed === 'false') {
+        where.completed = false;
+    }
+
+    if(query.hasOwnProperty('q') && query.q.length > 0) {
+        where.description = {
+            $like: '%' + query.q + '%'
+        };
+    }
+
+    db.todo.findAll({where: where}).then(function (todos) {
+        res.json(todos);
+    }, function (e) {
+        res.status(500).send();
+    })
+
+    // var queryParams = req.query;
+    // var filteredTodos = todos;
     
-    if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'true') {
-        filteredTodos = _.where(filteredTodos, {completed: true});
-    } else if(queryParams.hasOwnProperty('completed') && queryParams.completed === 'false') {
-        filteredTodos = _.where(filteredTodos, { completed: false });
-    }
+    // if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'true') {
+    //     filteredTodos = _.where(filteredTodos, {completed: true});
+    // } else if(queryParams.hasOwnProperty('completed') && queryParams.completed === 'false') {
+    //     filteredTodos = _.where(filteredTodos, { completed: false });
+    // }
 
-    if(queryParams.hasOwnProperty('q') && queryParams.q.length > 0) {
-        filteredTodos = _.filter(filteredTodos, function(todo) {
-            return todo.description.toLowerCase().indexOf(queryParams.q.toLowerCase()) > -1;
-        });
-    }
+    // if(queryParams.hasOwnProperty('q') && queryParams.q.length > 0) {
+    //     filteredTodos = _.filter(filteredTodos, function(todo) {
+    //         return todo.description.toLowerCase().indexOf(queryParams.q.toLowerCase()) > -1;
+    //     });
+    // }
 
-    res.json(filteredTodos); 
+    // res.json(filteredTodos); 
 });
 
 //GET /todos/:id            //getting each todo module //:id with variable id
