@@ -3,7 +3,7 @@ var env = process.env.NODE_ENV || 'development';
 var sequelize;
 	if(env === 'production')  {
 		    sequelize = new Sequelize(process.env.DATABASE.URL, {
-			dialet : 'postgres'
+			dialect : 'postgres'
 		});
 	} else {
 		    sequelize =  new Sequelize(undefined, undefined, undefined, {
